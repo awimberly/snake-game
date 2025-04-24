@@ -2,7 +2,18 @@ import { useState, useCallback } from 'react';
 import { Position, Direction, GameState } from '../types';
 import { GRID_SIZE } from '../constants';
 
-export const useGameLogic = () => {
+interface GameLogicReturn {
+  snake: Position[];
+  food: Position;
+  score: number;
+  isPaused: boolean;
+  isGameOver: boolean;
+  moveSnake: (direction?: Direction) => void;
+  resetGame: () => void;
+  togglePause: () => void;
+}
+
+export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'crash') => void): GameLogicReturn => {
   const [gameState, setGameState] = useState<GameState>({
     snake: [{ x: 10, y: 10 }],
     food: { x: 15, y: 15 },
@@ -106,24 +117,16 @@ export const useGameLogic = () => {
     });
   };
 
-  const changeDirection = (newDirection: Direction) => {
-    const opposites = {
-      UP: 'DOWN',
-      DOWN: 'UP',
-      LEFT: 'RIGHT',
-      RIGHT: 'LEFT'
-    };
 
-    if (opposites[newDirection] !== gameState.direction) {
-      setGameState(prev => ({ ...prev, direction: newDirection }));
-    }
-  };
 
   return {
-    gameState,
+    snake: gameState.snake,
+    food: gameState.food,
+    score: gameState.score,
+    isPaused: gameState.isPaused,
+    isGameOver: gameState.gameOver,
     moveSnake,
     resetGame,
     togglePause,
-    changeDirection
   };
 };

@@ -6,21 +6,24 @@ import { useGameLogic } from './hooks/useGameLogic';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { getColors, INITIAL_SPEED } from './constants';
 import { useTheme } from './hooks/useTheme';
+import { useSound } from './hooks/useSound';
 import './App.css';
 
 export const App = () => {
   const { theme, toggleTheme } = useTheme();
+  const { isSoundEnabled, toggleSound, playSound } = useSound();
   const COLORS = getColors(theme);
-  const { gameState, moveSnake, resetGame, togglePause, changeDirection } = useGameLogic();
+  const { snake, food, score, isPaused, isGameOver, moveSnake, resetGame, togglePause } =
+    useGameLogic(INITIAL_SPEED, playSound);
 
-  useKeyboardControls(changeDirection, togglePause, gameState.gameOver);
+  useKeyboardControls(moveSnake, togglePause, isGameOver);
 
   useEffect(() => {
-    if (!gameState.gameOver && !gameState.isPaused) {
+    if (!isGameOver && !isPaused) {
       const gameLoop = setInterval(moveSnake, INITIAL_SPEED);
       return () => clearInterval(gameLoop);
     }
-  }, [moveSnake, gameState.gameOver, gameState.isPaused]);
+  }, [moveSnake, isGameOver, isPaused]);
 
   return (
     <div
@@ -42,20 +45,22 @@ export const App = () => {
       </h1>
       <div className="game-container">
         <GameBoard
-          snake={gameState.snake}
-          food={gameState.food}
-          isPaused={gameState.isPaused}
+          snake={snake}
+          food={food}
+          isPaused={isPaused}
           theme={theme}
         />
         <div className="game-controls">
           <GameControls 
-            score={gameState.score} 
+            score={score} 
             onReset={resetGame} 
-            isPaused={gameState.isPaused}
-            isGameOver={gameState.gameOver}
+            isPaused={isPaused}
+            isGameOver={isGameOver}
             onPauseToggle={togglePause}
             theme={theme}
             onThemeToggle={toggleTheme}
+            onSoundToggle={toggleSound}
+            isSoundEnabled={isSoundEnabled}
           />
 
         </div>

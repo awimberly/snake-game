@@ -4,6 +4,8 @@ import { Theme, getColors } from '../constants';
 interface GameControlsProps {
   theme: Theme;
   onThemeToggle: () => void;
+  onSoundToggle: () => void;
+  isSoundEnabled: boolean;
   score: number;
   isPaused: boolean;
   isGameOver: boolean;
@@ -14,6 +16,8 @@ interface GameControlsProps {
 export const GameControls: React.FC<GameControlsProps> = ({
   theme,
   onThemeToggle,
+  onSoundToggle,
+  isSoundEnabled,
   score,
   isPaused,
   isGameOver,
@@ -107,6 +111,25 @@ export const GameControls: React.FC<GameControlsProps> = ({
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+        <button
+          onClick={(e) => {
+            onSoundToggle();
+            (e.target as HTMLElement).blur();
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            cursor: 'pointer'
+          }}
+          aria-label={`${isSoundEnabled ? 'Mute' : 'Unmute'} sound`}
+        >
+          {isSoundEnabled ? '🔊' : '🔇'}
         </button>
       </div>
       <div 
