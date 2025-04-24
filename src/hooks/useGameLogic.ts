@@ -45,7 +45,21 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     return availablePositions[randomIndex];
   }, [gameState.snake]);
 
-  const moveSnake = useCallback(() => {
+  const moveSnake = useCallback((direction?: Direction) => {
+    if (direction) {
+      // Handle direction change
+      const opposites = {
+        UP: 'DOWN',
+        DOWN: 'UP',
+        LEFT: 'RIGHT',
+        RIGHT: 'LEFT'
+      };
+
+      if (opposites[direction] !== gameState.direction) {
+        setGameState(prev => ({ ...prev, direction }));
+      }
+      return;
+    }
     if (gameState.gameOver || gameState.isPaused) return;
 
     const newSnake = [...gameState.snake];
@@ -125,7 +139,13 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     score: gameState.score,
     isPaused: gameState.isPaused,
     isGameOver: gameState.gameOver,
-    moveSnake,
+    moveSnake: (direction?: Direction) => {
+      if (direction) {
+        moveSnake(direction);
+      } else {
+        moveSnake();
+      }
+    },
     resetGame,
     togglePause,
   };
