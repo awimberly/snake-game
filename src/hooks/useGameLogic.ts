@@ -1,26 +1,21 @@
 import { useState, useCallback } from 'react';
-import { Position, Direction, GameState } from '../types';
+import { Position, Direction, GameState, GameLogicReturn } from '../types';
 import { GRID_SIZE } from '../constants';
 
-interface GameLogicReturn {
-  snake: Position[];
-  food: Position;
-  score: number;
-  isPaused: boolean;
-  isGameOver: boolean;
-  moveSnake: (direction?: Direction) => void;
-  resetGame: () => void;
-  togglePause: () => void;
-}
-
 export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'crash') => void): GameLogicReturn => {
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('snakeHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
   const [gameState, setGameState] = useState<GameState>({
     snake: [{ x: 10, y: 10 }],
     food: { x: 15, y: 15 },
     direction: 'RIGHT',
     gameOver: false,
     score: 0,
-    isPaused: false
+    isPaused: false,
+    isStarted: false,
   });
 
   const generateFood = useCallback((): Position => {
@@ -46,6 +41,7 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
   }, [gameState.snake]);
 
   const moveSnake = useCallback((direction?: Direction) => {
+    if (!gameState.isStarted) return;
     if (direction) {
       // Handle direction change
       const opposites = {
@@ -87,12 +83,14 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
       head.y < 0 ||
       head.y >= GRID_SIZE
     ) {
+      playSound('crash');
       setGameState(prev => ({ ...prev, gameOver: true }));
       return;
     }
 
     // Check collision with self
     if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+      playSound('crash');
       setGameState(prev => ({ ...prev, gameOver: true }));
       return;
     }
@@ -100,7 +98,14 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     newSnake.unshift(head);
 
     // Check if food is eaten
-    if (head.x === gameState.food.x && head.y === gameState.food.y) {
+    const hasEatenFood = head.x === gameState.food.x && head.y === gameState.food.y;
+    if (hasEatenFood) {
+      playSound('eat');
+      const newScore = gameState.score + 1;
+      if (newScore > highScore) {
+        setHighScore(newScore);
+        localStorage.setItem('snakeHighScore', newScore.toString());
+      }
       setGameState(prev => ({
         ...prev,
         food: generateFood(),
@@ -114,14 +119,25 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
       ...prev,
       snake: newSnake
     }));
-  }, [gameState, generateFood]);
+  }, [gameState, generateFood, highScore, playSound]);
 
   const togglePause = () => {
+    if (!gameState.isStarted || gameState.gameOver) return;
     setGameState(prev => ({ ...prev, isPaused: !prev.isPaused }));
+  };
+
+  const startGame = () => {
+    setGameState(prev => ({
+      ...prev,
+      isStarted: true,
+      isPaused: false,
+      gameOver: false
+    }));
   };
 
   const resetGame = () => {
     setGameState({
+      isStarted: false,
       snake: [{ x: 10, y: 10 }],
       food: generateFood(),
       direction: 'RIGHT',
@@ -131,14 +147,14 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     });
   };
 
-
-
   return {
     snake: gameState.snake,
     food: gameState.food,
     score: gameState.score,
+    highScore,
     isPaused: gameState.isPaused,
     isGameOver: gameState.gameOver,
+    isStarted: gameState.isStarted,
     moveSnake: (direction?: Direction) => {
       if (direction) {
         moveSnake(direction);
@@ -148,5 +164,6 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     },
     resetGame,
     togglePause,
+    startGame,
   };
 };

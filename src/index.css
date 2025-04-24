@@ -55,10 +55,51 @@ code {
 }
 
 .game-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: center;
+}
+
+.score-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.score-icon {
+  
+}
+
+.controls-help {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
 }
 
 .game-board {

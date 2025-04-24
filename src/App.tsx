@@ -4,19 +4,22 @@ import { GameControls } from './components/GameControls';
 
 import { useGameLogic } from './hooks/useGameLogic';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import { getColors, INITIAL_SPEED } from './constants';
+import { useSwipeControls } from './hooks/useSwipeControls';
+import { useMobileDetect } from './hooks/useMobileDetect';
+import { INITIAL_SPEED } from './constants';
 import { useTheme } from './hooks/useTheme';
 import { useSound } from './hooks/useSound';
-import './App.css';
+import './styles/global.scss';
 
-export const App = () => {
+function App() {
   const { theme, toggleTheme } = useTheme();
   const { isSoundEnabled, toggleSound, playSound } = useSound();
-  const COLORS = getColors(theme);
-  const { snake, food, score, isPaused, isGameOver, moveSnake, resetGame, togglePause } =
+  const isMobile = useMobileDetect();
+  const { snake, food, score, highScore, isPaused, isGameOver, isStarted, moveSnake, resetGame, togglePause, startGame } =
     useGameLogic(INITIAL_SPEED, playSound);
 
-  useKeyboardControls(moveSnake, togglePause, isGameOver);
+  useKeyboardControls(moveSnake, togglePause, isGameOver, isStarted, startGame);
+  useSwipeControls(moveSnake, isMobile && isStarted);
 
   useEffect(() => {
     if (!isGameOver && !isPaused) {
@@ -26,31 +29,45 @@ export const App = () => {
   }, [moveSnake, isGameOver, isPaused]);
 
   return (
-    <div
-      className="App"
-      style={{
-        backgroundColor: COLORS.BACKGROUND,
-      }}
-    >
-      <h1
-        style={{
-          color: COLORS.TEXT,
-          margin: 0,
-          padding: '20px 0',
-          fontSize: '1.8rem',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
-        }}
-      >
-        Snake Game
-      </h1>
-      <div className="game-container">
-        <GameBoard
-          snake={snake}
-          food={food}
-          isPaused={isPaused}
-          theme={theme}
-        />
-        <div className="game-controls">
+    <div className="app">
+      <div className="container">
+        <div className="game-header">
+          <div className="game-header__controls">            
+            <button
+              onClick={toggleTheme}
+              className="icon-button"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+            <button
+              onClick={toggleSound}
+              className="icon-button"
+              aria-label={`${isSoundEnabled ? 'Mute' : 'Unmute'} sound`}
+            >
+              {isSoundEnabled ? '🔊' : '🔇'}
+            </button>
+          </div>          
+          <div className="game-header__scores">
+            <div className="score-item">
+              <span className="score-icon" role="img" aria-label="Current Score">🎯</span>
+              {score}
+            </div>
+            <div className="score-item">
+              <span className="score-icon" role="img" aria-label="High Score">👑</span>
+              {highScore}
+            </div>
+          </div>
+        </div>
+
+        <div className="game-container">
+          <GameBoard 
+            snake={snake}
+            food={food}
+            isPaused={isPaused}
+            theme={theme}
+          />
+          
           <GameControls 
             score={score} 
             onReset={resetGame} 
@@ -58,11 +75,23 @@ export const App = () => {
             isGameOver={isGameOver}
             onPauseToggle={togglePause}
             theme={theme}
-            onThemeToggle={toggleTheme}
-            onSoundToggle={toggleSound}
-            isSoundEnabled={isSoundEnabled}
+            onStartGame={startGame}
+            isStarted={isStarted}
           />
 
+          <div className="controls-help" aria-label="Game Controls Instructions">
+            {!isMobile ? (
+              <div className="controls-help__text">
+                <div>Use <span className="control-icon" role="img" aria-hidden="true">⌨️</span> arrow keys or WASD to move</div>
+                <div>Press Space or P to start/pause <span className="control-icon" role="img" aria-hidden="true">⏸️</span></div>
+              </div>
+            ) : (
+              <div className="controls-help__text">
+                <div>Swipe <span className="control-icon" role="img" aria-hidden="true">👆</span> to move</div>
+                <div>Tap to start/pause <span className="control-icon" role="img" aria-hidden="true">⏸️</span></div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

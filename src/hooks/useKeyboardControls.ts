@@ -2,44 +2,57 @@ import { useEffect } from 'react';
 import { Direction } from '../types';
 
 export const useKeyboardControls = (
-  onDirectionChange: (direction: Direction) => void,
-  onPauseToggle: () => void,
-  isGameOver: boolean
+  moveSnake: (direction?: Direction) => void,
+  togglePause: () => void,
+  isGameOver: boolean,
+  isStarted: boolean,
+  startGame: () => void
 ) => {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (isGameOver) return;
+      // Prevent default behavior for game controls
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'W', 's', 'S', 'a', 'A', 'd', 'D', ' ', 'p', 'P'].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      // Handle pause/start
+      if ([' ', 'p', 'P'].includes(e.key)) {
+        if (!isStarted && !isGameOver) {
+          startGame();
+        } else {
+          togglePause();
+        }
+        return;
+      }
+
+      // Only process movement if game is active
+      if (isGameOver || !isStarted) return;
 
       switch (e.key) {
         case 'ArrowUp':
         case 'w':
         case 'W':
-          onDirectionChange('UP');
+          moveSnake('UP');
           break;
         case 'ArrowDown':
         case 's':
         case 'S':
-          onDirectionChange('DOWN');
+          moveSnake('DOWN');
           break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          onDirectionChange('LEFT');
+          moveSnake('LEFT');
           break;
         case 'ArrowRight':
         case 'd':
         case 'D':
-          onDirectionChange('RIGHT');
-          break;
-        case ' ':
-        case 'p':
-        case 'P':
-          onPauseToggle();
+          moveSnake('RIGHT');
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [onDirectionChange, onPauseToggle, isGameOver]);
+  }, [moveSnake, togglePause, isGameOver, isStarted, startGame]);
 };
