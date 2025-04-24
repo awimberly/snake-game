@@ -5,9 +5,43 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .game-container {
+    padding: 10px;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  .game-board {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    margin: 0 auto;
+  }
+
+  .mobile-controls {
+    display: grid !important;
+  }
+
+  /* Hide mobile controls on desktop */
+  @media (min-width: 769px) {
+    .mobile-controls {
+      display: none !important;
+    }
+  }
+}
+
+/* Prevent scrolling when touching the canvas */
+canvas {
+  touch-action: none;
 }

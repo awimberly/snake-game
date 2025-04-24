@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { GameBoard } from './components/GameBoard';
 import { GameControls } from './components/GameControls';
+import { MobileControls } from './components/MobileControls';
 import { useGameLogic } from './hooks/useGameLogic';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { getColors, INITIAL_SPEED } from './constants';
@@ -25,34 +26,20 @@ export const App = () => {
     <div
       className="App"
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: COLORS.BACKGROUND,
-        padding: '20px'
       }}
     >
       <h1
         style={{
           color: COLORS.TEXT,
-          fontSize: '2.5rem',
-          marginBottom: '20px',
+          margin: 0,
+          padding: '20px 0',
           fontFamily: 'system-ui, -apple-system, sans-serif'
         }}
       >
         Snake Game
       </h1>
-      <div
-        className="game-container"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          alignItems: 'center'
-        }}
-      >
+      <div className="game-container">
         <GameBoard
           snake={gameState.snake}
           food={gameState.food}
@@ -68,6 +55,10 @@ export const App = () => {
             onPauseToggle={togglePause}
             theme={theme}
             onThemeToggle={toggleTheme}
+          />
+          <MobileControls
+            onDirectionChange={changeDirection}
+            theme={theme}
           />
         </div>
       </div>
