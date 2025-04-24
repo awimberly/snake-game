@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,6 +8,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: contain;
   touch-action: none;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+html {
+  height: -webkit-fill-available;
 }
 
 code {
@@ -16,10 +23,21 @@ code {
 
 /* Mobile Styles */
 @media (max-width: 768px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
   .game-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 10px;
     max-width: 100vw;
-    max-height: 100vh;
+    gap: 10px;
   }
 
   .game-board {
@@ -29,15 +47,39 @@ code {
     margin: 0 auto;
   }
 
-  .mobile-controls {
-    display: grid !important;
+  .game-controls {
+    padding: 10px;
   }
 
-  /* Hide mobile controls on desktop */
-  @media (min-width: 769px) {
-    .mobile-controls {
-      display: none !important;
-    }
+  .game-controls {
+    padding: 10px;
+  }
+
+  .game-controls button {
+    min-width: 80px;
+    font-size: 16px !important;
+  }
+
+  /* Increase score and game over text size */
+  .game-controls > div:first-child {
+    font-size: 32px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .game-controls > div:nth-child(2) {
+    font-size: 28px !important;
+  }
+
+  .mobile-controls {
+    display: block !important;
+    margin-top: auto;
+    padding: 10px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-controls {
+    display: none !important;
   }
 }
 

@@ -49,7 +49,12 @@ export const GameControls: React.FC<GameControlsProps> = ({
         style={{
           fontSize: '2rem',
           fontWeight: 'bold',
-          color: COLORS.TEXT
+          color: COLORS.TEXT,
+          backgroundColor: COLORS.BACKGROUND,
+          padding: '10px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          marginBottom: '10px'
         }}
       >
         Score: {score}
@@ -58,7 +63,13 @@ export const GameControls: React.FC<GameControlsProps> = ({
         <div
           style={{
             fontSize: '1.5rem',
-            color: COLORS.TEXT
+            fontWeight: 'bold',
+            color: COLORS.TEXT,
+            backgroundColor: COLORS.BACKGROUND,
+            padding: '10px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            marginBottom: '10px'
           }}
         >
           Game Over!
@@ -71,7 +82,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
             style={buttonStyle}
             aria-label={isPaused ? 'Resume game' : 'Pause game'}
           >
-            {isPaused ? '▶ Resume' : '⏸ Pause'}
+            {isPaused ? 'Resume' : 'Pause'}
           </button>
         )}
         <button
@@ -79,7 +90,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
           style={buttonStyle}
           aria-label="Start new game"
         >
-          {isGameOver ? '🔄 Play Again' : 'Reset'}
+          {isGameOver ? 'Play Again' : 'Reset'}
         </button>
         <button
           onClick={onThemeToggle}
@@ -91,7 +102,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
           }}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
-          {theme === 'dark' ? '☀️' : '🌙'}
+          {theme === 'dark' ? 'Light' : 'Dark'}
         </button>
       </div>
       <div 
@@ -100,7 +111,8 @@ export const GameControls: React.FC<GameControlsProps> = ({
         style={{
           color: COLORS.TEXT,
           textAlign: 'center',
-          marginTop: '1rem'
+          marginTop: '1rem',
+          display: window.innerWidth <= 768 ? 'none' : 'block'
         }}
       >
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Controls</h3>

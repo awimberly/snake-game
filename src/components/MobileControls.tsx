@@ -11,13 +11,13 @@ export const MobileControls: React.FC<MobileControlsProps> = ({ onDirectionChang
   const colors = getColors(theme);
 
   const buttonStyle = {
-    width: '50px',
-    height: '50px',
-    border: `2px solid ${colors.buttonBackground}`,
-    borderRadius: '12px',
+    width: '60px',
+    height: '60px',
+    border: 'none',
+    borderRadius: '50%',
     backgroundColor: colors.BUTTON.BACKGROUND,
     color: colors.BUTTON.TEXT,
-    fontSize: '24px',
+    fontSize: '28px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -27,15 +27,19 @@ export const MobileControls: React.FC<MobileControlsProps> = ({ onDirectionChang
     margin: 0,
     transition: 'all 0.2s ease',
     WebkitTapHighlightColor: 'transparent',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    userSelect: 'none' as const,
   };
 
   const buttonContainerStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '10px',
+    gap: '15px',
     width: 'fit-content',
     margin: '0 auto',
-    padding: '10px',
+    padding: '15px',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: '20px',
   };
 
   return (
