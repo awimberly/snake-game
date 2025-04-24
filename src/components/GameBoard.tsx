@@ -49,11 +49,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({ snake, food, isPaused, the
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-        gap: '1px',
+        gap: 0,
         backgroundColor: COLORS.GRID,
-        padding: '10px',
-        borderRadius: '8px',
-        position: 'relative'
+        padding: 0,
+        borderRadius: '4px',
+        position: 'relative',
+        width: 'fit-content',
+        margin: '0 auto'
       }}
       role="grid"
       aria-label="Snake game board"

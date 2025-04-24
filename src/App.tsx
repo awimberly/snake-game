@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { GameBoard } from './components/GameBoard';
 import { GameControls } from './components/GameControls';
-import { MobileControls } from './components/MobileControls';
+
 import { useGameLogic } from './hooks/useGameLogic';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { getColors, INITIAL_SPEED } from './constants';
@@ -34,6 +34,7 @@ export const App = () => {
           color: COLORS.TEXT,
           margin: 0,
           padding: '20px 0',
+          fontSize: '1.8rem',
           fontFamily: 'system-ui, -apple-system, sans-serif'
         }}
       >
@@ -56,10 +57,7 @@ export const App = () => {
             theme={theme}
             onThemeToggle={toggleTheme}
           />
-          <MobileControls
-            onDirectionChange={changeDirection}
-            theme={theme}
-          />
+
         </div>
       </div>
     </div>

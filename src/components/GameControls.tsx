@@ -50,10 +50,6 @@ export const GameControls: React.FC<GameControlsProps> = ({
           fontSize: '2rem',
           fontWeight: 'bold',
           color: COLORS.TEXT,
-          backgroundColor: COLORS.BACKGROUND,
-          padding: '10px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           marginBottom: '10px'
         }}
       >
@@ -63,12 +59,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
         <div
           style={{
             fontSize: '1.5rem',
-            fontWeight: 'bold',
             color: COLORS.TEXT,
-            backgroundColor: COLORS.BACKGROUND,
-            padding: '10px 20px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
             marginBottom: '10px'
           }}
         >
@@ -78,31 +69,44 @@ export const GameControls: React.FC<GameControlsProps> = ({
       <div style={{ display: 'flex', gap: '8px' }}>
         {!isGameOver && (
           <button
-            onClick={onPauseToggle}
+            onClick={(e) => {
+              onPauseToggle();
+              (e.target as HTMLElement).blur();
+            }}
             style={buttonStyle}
             aria-label={isPaused ? 'Resume game' : 'Pause game'}
           >
-            {isPaused ? 'Resume' : 'Pause'}
+            {isPaused ? '▶ Resume' : '⏸ Pause'}
           </button>
         )}
         <button
-          onClick={onReset}
+          onClick={(e) => {
+            onReset();
+            (e.target as HTMLElement).blur();
+          }}
           style={buttonStyle}
           aria-label="Start new game"
         >
-          {isGameOver ? 'Play Again' : 'Reset'}
+          {isGameOver ? '🔄 Play Again' : 'Reset'}
         </button>
         <button
-          onClick={onThemeToggle}
+          onClick={(e) => {
+            onThemeToggle();
+            (e.target as HTMLElement).blur();
+          }}
           style={{
-            ...buttonStyle,
+            background: 'none',
+            border: 'none',
+            padding: 0,
             display: 'flex',
             alignItems: 'center',
-            gap: '4px'
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            cursor: 'pointer'
           }}
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
-          {theme === 'dark' ? 'Light' : 'Dark'}
+          {theme === 'dark' ? '☀️' : '🌙'}
         </button>
       </div>
       <div 
