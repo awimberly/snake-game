@@ -32,30 +32,14 @@ function App() {
     <div className="app">
       <div className="container">
         <div className="game-header">
-          <div className="game-header__controls">            
-            <button
-              onClick={toggleTheme}
-              className="icon-button"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
-            <button
-              onClick={toggleSound}
-              className="icon-button"
-              aria-label={`${isSoundEnabled ? 'Mute' : 'Unmute'} sound`}
-            >
-              {isSoundEnabled ? '🔊' : '🔇'}
-            </button>
-          </div>          
           <div className="game-header__scores">
             <div className="score-item">
-              <span className="score-icon" role="img" aria-label="Current Score">🎯</span>
-              {score}
+              <span className="score-icon" role="img" aria-hidden="true">🎯</span>
+              <span className="sr-only">Current Score:</span> {score}
             </div>
             <div className="score-item">
-              <span className="score-icon" role="img" aria-label="High Score">👑</span>
-              {highScore}
+              <span className="score-icon" role="img" aria-hidden="true">👑</span>
+              <span className="sr-only">High Score:</span> {highScore}
             </div>
           </div>
         </div>
@@ -77,6 +61,9 @@ function App() {
             theme={theme}
             onStartGame={startGame}
             isStarted={isStarted}
+            onThemeToggle={toggleTheme}
+            onSoundToggle={toggleSound}
+            isSoundEnabled={isSoundEnabled}
           />
 
           <div className="controls-help" aria-label="Game Controls Instructions">

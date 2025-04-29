@@ -1,73 +1,113 @@
 import React from 'react';
 import '../styles/global.scss';
-import { Theme } from '../constants';
 
 interface GameControlsProps {
-  theme: Theme;
   score: number;
+  onReset: () => void;
   isPaused: boolean;
   isGameOver: boolean;
   onPauseToggle: () => void;
+  theme: string;
   onStartGame: () => void;
   isStarted: boolean;
-  onReset: () => void;
+  onThemeToggle: () => void;
+  onSoundToggle: () => void;
+  isSoundEnabled: boolean;
 }
 
 export const GameControls: React.FC<GameControlsProps> = ({
-  theme,
-  score,
+  onReset,
   isPaused,
   isGameOver,
   onPauseToggle,
   onStartGame,
   isStarted,
-  onReset
+  theme,
+  onThemeToggle,
+  onSoundToggle,
+  isSoundEnabled,
 }) => {
+  const handleReset = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    onReset();
+    if (!isStarted) {
+      onStartGame();
+    }
+  };
 
   return (
     <div className="game-controls">
-      {isGameOver && (
-        <div className="game-controls__game-over">
-          Game Over!
-        </div>
-      )}
-      <div className="game-controls__buttons">
-        {!isStarted && !isGameOver ? (
-          <button
-            onClick={(e) => {
-              onStartGame();
-              (e.target as HTMLElement).blur();
-            }}
-            className="game-controls__button"
-            aria-label="Start game"
-          >
-            ▶️ Play
-          </button>
-        ) : !isGameOver ? (
-          <button
-            onClick={(e) => {
-              onPauseToggle();
-              (e.target as HTMLElement).blur();
-            }}
-            className="game-controls__button"
-            aria-label={isPaused ? 'Resume game' : 'Pause game'}
-          >
-            {isPaused ? '▶️ Resume' : '⏸️ Pause'}
-          </button>
-        ) : null}
+      <div className="game-controls__settings">
         <button
-          onClick={(e) => {
-            onReset();
-            (e.target as HTMLElement).blur();
+          onClick={onThemeToggle}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            onThemeToggle();
           }}
-          className="game-controls__button"
-          aria-label="Start new game"
+          className="control-button"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
-          {isGameOver ? '🔄 Play Again' : '🔄 Reset'}
+          <span role="img" aria-hidden="true">{theme === 'dark' ? '☀️' : '🌙'}</span>
+          <span className="sr-only">Toggle Theme</span>
         </button>
-
+        <button
+          onClick={onSoundToggle}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            onSoundToggle();
+          }}
+          className="control-button"
+          aria-label={`${isSoundEnabled ? 'Mute' : 'Unmute'} sound`}
+        >
+          <span role="img" aria-hidden="true">{isSoundEnabled ? '🔊' : '🔇'}</span>
+          <span className="sr-only">{isSoundEnabled ? 'Mute' : 'Unmute'} Sound</span>
+        </button>
       </div>
+      <div className="game-controls__buttons">
+        {!isStarted && !isGameOver && (
+          <button
+            onClick={onStartGame}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              onStartGame();
+            }}
+            className="control-button"
+            aria-label="Start Game"
+          >
+            <span role="img" aria-hidden="true">▶️</span>
+            <span className="sr-only">Start</span>
+          </button>
+        )}
 
+        {isStarted && !isGameOver && (
+          <button
+            onClick={onPauseToggle}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              onPauseToggle();
+            }}
+            className="control-button"
+            aria-label={isPaused ? 'Resume Game' : 'Pause Game'}
+          >
+            <span role="img" aria-hidden="true">
+              {isPaused ? '▶️' : '⏸️'}
+            </span>
+            <span className="sr-only">{isPaused ? 'Resume' : 'Pause'}</span>
+          </button>
+        )}
+
+        {(isGameOver || isStarted) && (
+          <button
+            onClick={handleReset}
+            onTouchStart={handleReset}
+            className="control-button"
+            aria-label="Reset Game"
+          >
+            <span role="img" aria-hidden="true">🔄</span>
+            <span className="sr-only">Reset</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 };

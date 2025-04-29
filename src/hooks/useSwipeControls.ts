@@ -1,62 +1,99 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Direction } from '../types';
+
+// Constants for swipe detection
+const MIN_SWIPE_DISTANCE = 3; // Very small distance for immediate response
+const MIN_SWIPE_VELOCITY = 0.1; // Lower threshold for faster detection
+const DIRECTION_LOCK_MS = 100; // Prevent rapid direction changes
 
 export const useSwipeControls = (
   onDirectionChange: (direction: Direction) => void,
   isEnabled: boolean
-) => {
+): void => {
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchStartTime = useRef(0);
+  const lastDirection = useRef<Direction | null>(null);
+  const lastDirectionTime = useRef(0);
+  const isMoving = useRef(false);
+
+  const handleTouchStart = useCallback((e: TouchEvent): void => {
+    if (!isEnabled) return;
+    e.preventDefault(); // Prevent scrolling
+    
+    const touch = e.touches[0];
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+    touchStartTime.current = Date.now();
+    isMoving.current = true;
+  }, [isEnabled]);
+
+  const handleTouchMove = useCallback((e: TouchEvent): void => {
+    if (!isEnabled || !isMoving.current) return;
+    e.preventDefault(); // Prevent scrolling
+
+    const touch = e.touches[0];
+    const currentTime = Date.now();
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+    const timeDelta = currentTime - touchStartTime.current;
+
+    // Calculate velocity in pixels per millisecond
+    const velocity = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / Math.max(1, timeDelta);
+
+    // Early exit if movement is too small and slow
+    if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE && 
+        Math.abs(deltaY) < MIN_SWIPE_DISTANCE && 
+        velocity < MIN_SWIPE_VELOCITY) {
+      return;
+    }
+
+    // Determine primary direction using absolute values
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+    let direction: Direction;
+
+    if (absX > absY) {
+      direction = deltaX > 0 ? 'RIGHT' : 'LEFT';
+    } else {
+      direction = deltaY > 0 ? 'DOWN' : 'UP';
+    }
+
+    // Check if enough time has passed since last direction change
+    if (direction !== lastDirection.current && 
+        currentTime - lastDirectionTime.current >= DIRECTION_LOCK_MS) {
+      onDirectionChange(direction);
+      lastDirection.current = direction;
+      lastDirectionTime.current = currentTime;
+
+      // Update reference point for next movement
+      touchStartX.current = touch.clientX;
+      touchStartY.current = touch.clientY;
+      touchStartTime.current = currentTime;
+    }
+  }, [isEnabled, onDirectionChange]);
+
+  const handleTouchEnd = useCallback((): void => {
+    isMoving.current = false;
+    lastDirection.current = null;
+  }, []);
+
   useEffect(() => {
     if (!isEnabled) return;
 
-    let touchStartX = 0;
-    let touchStartY = 0;
-    const MIN_SWIPE_DISTANCE = 30;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!touchStartX || !touchStartY) return;
-
-      const touchEndX = e.touches[0].clientX;
-      const touchEndY = e.touches[0].clientY;
-
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = touchEndY - touchStartY;
-
-      // Only handle the swipe if it's long enough
-      if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE && Math.abs(deltaY) < MIN_SWIPE_DISTANCE) return;
-
-      // Determine if the swipe is more horizontal or vertical
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        // Horizontal swipe
-        if (deltaX > 0) {
-          onDirectionChange('RIGHT');
-        } else {
-          onDirectionChange('LEFT');
-        }
-      } else {
-        // Vertical swipe
-        if (deltaY > 0) {
-          onDirectionChange('DOWN');
-        } else {
-          onDirectionChange('UP');
-        }
-      }
-
-      // Reset touch start coordinates
-      touchStartX = 0;
-      touchStartY = 0;
-    };
-
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchmove', handleTouchMove);
+    const options = { passive: false };
+    document.addEventListener('touchstart', handleTouchStart, options);
+    document.addEventListener('touchmove', handleTouchMove, options);
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchcancel', handleTouchEnd);
 
     return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('touchcancel', handleTouchEnd);
     };
-  }, [onDirectionChange, isEnabled]);
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd, isEnabled]);
 };
+
+export default useSwipeControls;

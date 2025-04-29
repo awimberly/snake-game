@@ -35,7 +35,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ snake, food, isPaused, the
               key={`${rowIndex}-${colIndex}`} 
               className={cellClass}
               data-is-head={isSnakeHead}
-              aria-label={isFood ? 'Apple' : undefined}
+              aria-label={isFood ? 'Apple' : isSnakeHead ? 'Snake head' : isSnake ? 'Snake body' : 'Empty cell'}
+              role="img"
             />
           );
         };
