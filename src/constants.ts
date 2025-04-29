@@ -1,4 +1,4 @@
-export const GRID_SIZE = 15;
+export const GRID_SIZE = 13;
 export const CELL_SIZE = 25;
 export const INITIAL_SPEED = 150; // milliseconds between moves
 export const SPEED_INCREMENT = 0.95; // speed multiplier when food is eaten

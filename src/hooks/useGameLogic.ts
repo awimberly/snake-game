@@ -40,9 +40,9 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     );
     
     // Find all positions that aren't occupied by the snake
-    // Keep food away from edges by 1 cell
-    for (let y = 1; y < GRID_SIZE - 1; y++) {
-      for (let x = 1; x < GRID_SIZE - 1; x++) {
+    // Keep food away from edges by 2 cells for better visibility
+    for (let y = 2; y < GRID_SIZE - 2; y++) {
+      for (let x = 2; x < GRID_SIZE - 2; x++) {
         const posKey = `${x},${y}`;
         if (!snakeSet.has(posKey)) {
           validPositions.push({ x, y });
@@ -57,10 +57,11 @@ export const useGameLogic = (initialSpeed: number, playSound: (type: 'eat' | 'cr
     }
     
     // If no positions are available in the safe zone,
-    // try the entire grid except edges
+    // try a slightly larger area (1 cell from edges)
     for (let y = 1; y < GRID_SIZE - 1; y++) {
       for (let x = 1; x < GRID_SIZE - 1; x++) {
-        if (x !== currentSnake[0].x || y !== currentSnake[0].y) {
+        const posKey = `${x},${y}`;
+        if (!snakeSet.has(posKey)) {
           return { x, y };
         }
       }

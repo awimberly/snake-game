@@ -137,14 +137,17 @@ body {
     height: 25px;
     border: 1px solid var(--grid-color);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &--snake {
       background-color: var(--snake-color);
       position: relative;
-      width: 21px;
-      height: 21px;
+      width: 23px;
+      height: 23px;
       border-radius: 4px;
-      margin: 2px;
+      margin: 0;
       box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
 
       &[data-is-head='true'] {
